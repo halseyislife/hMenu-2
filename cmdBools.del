@@ -161,7 +161,7 @@ rule: "Double Jump"
     if (IsInAir())
     if (IsButtonHeld(EventPlayer(), Button.Jump))
     {
-        ApplyImpulse(EventPlayer(), Up(), 12, Relative.ToWorld, ContraryMotion.Cancel);
+        ApplyImpulse(EventPlayer(), Up(), 10, Relative.ToWorld, ContraryMotion.Cancel);
 
     }
 define ReturnBool(define cmd !, define player !): FilteredArray(player.boolArray, ArrayElement()[0] == cmd)[0][1];
