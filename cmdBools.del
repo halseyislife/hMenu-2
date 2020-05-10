@@ -1,0 +1,189 @@
+playervar define overridePlayers !;
+playervar define overrideEnt;
+
+playervar define boolArray;
+//[0] = cmd names
+//[1] = boolean value
+//[2] = string value
+
+
+globalvar define toggableCommands;
+
+
+
+playervar define menuAccessible !;
+
+playervar define freecamPos;
+playervar define freecamMenu !;
+
+playervar define loopKill !;
+playervar define isJailed !;
+playervar define jailInfo;
+//[0] - Position
+//[1] - Entity
+
+playervar define blindInfo;
+//[0] - Boolean
+//[1] - Entity
+
+void ToggleFunction(define cmd !, define player !) playervar "toggle Function"
+{
+      if (ReturnBool(cmd, player))
+      {
+          SwitchToggle(cmd, player, false, "On");
+      }
+      else if (!ReturnBool(cmd, player))
+      {
+          //check if cmd is available
+          if (!ArrayContains(player.allowedCMDS, cmd))
+          {
+              Abort();
+          }
+         SwitchToggle(cmd, player, true, "Off");
+      }
+      tempStrings[0] = ReturnToggleString(cmd, player);
+}
+
+rule: "On Toggle Function"
+    Event.OngoingPlayer
+    if (menuOpen)
+    if (arrayCollection[selectedIndex] != null)
+    if (ArrayContains(toggableCommands, arrayCollection[selectedIndex]) || (ArrayContains(toggableCommands, arrayCollection[selectedIndex]) && tempStrings[0] != ReturnToggleString(arrayCollection[selectedIndex], EventPlayer())))
+    {
+        tempStrings[0] = ReturnToggleString(arrayCollection[selectedIndex], EventPlayer());
+    }
+
+rule: "Off Toggle Function"
+    Event.OngoingPlayer
+    if (menuOpen)
+    if (!ArrayContains(toggableCommands, arrayCollection[selectedIndex]))
+    {
+        tempStrings[0] = " ";
+    }
+
+rule: "Start Freecam"
+    Event.OngoingPlayer
+    if (ReturnBool("Freecam", EventPlayer()))
+    {
+        freecamPos = EyePosition(EventPlayer());
+        StartCamera(EventPlayer(), freecamPos, (freecamPos) + (FacingDirectionOf(EventPlayer()) * 2), 1000);
+        CreateHudText(EventPlayer(), null, null, "Freecam Enabled! \n [Controls: \n Primary Fire - Move Forward \n Reload - Teleport to Camera]", Location.Right, 1, Color.Blue, Color.Blue, Color.White, HudTextRev.VisibleTo, Spectators.DefaultVisibility);
+        freecamMenu = LastTextID();
+    }
+
+rule: "Teleport To Freecam"
+    Event.OngoingPlayer
+    if (ReturnBool("Freecam", EventPlayer()))
+    if (IsButtonHeld(EventPlayer(), Button.Reload))
+    {
+        Teleport(EventPlayer(), freecamPos);
+    }
+
+rule: "Freecam Forward"
+    Event.OngoingPlayer
+    if (ReturnBool("Freecam", EventPlayer()))
+    if (IsButtonHeld(EventPlayer(), Button.PrimaryFire))
+    {
+        ChaseVariableAtRate(freecamPos, (freecamPos) + (FacingDirectionOf(EventPlayer()) * 2), 20, RateChaseReevaluation.DestinationAndRate);
+        while(ReturnBool("Freecam", EventPlayer()) && IsButtonHeld(EventPlayer(), Button.PrimaryFire))
+        {
+            Wait(0.25);
+        }
+        StopChasingVariable(freecamPos);
+    }
+rule: "Stop Freecam"
+    Event.OngoingPlayer
+    if (!ReturnBool("Freecam", EventPlayer()))
+    {
+        StopCamera(EventPlayer());
+        DestroyHudText(freecamMenu);
+    }
+
+
+rule: "Invisible On"
+    Event.OngoingPlayer
+    if (ReturnBool("Invisible", EventPlayer()))
+    {
+        SetInvisible(EventPlayer(), InvisibleTo.All);
+    }
+
+rule: "Invisible Off"
+    Event.OngoingPlayer
+    if (!ReturnBool("Invisible", EventPlayer()))
+    {
+        SetInvisible(EventPlayer(), InvisibleTo.None);
+    }
+
+rule: "Invincibility On"
+    Event.OngoingPlayer
+    if (ReturnBool("Invincibility", EventPlayer()) || HasStatus(EventPlayer(), Status.Invincible))
+    {
+        if (!ReturnBool("Invincibility", EventPlayer()) && HasStatus(EventPlayer(), Status.Invincible))
+        {
+            SwitchToggle("Invincibility", EventPlayer(), true, "Off");
+        }
+        SetStatus(EventPlayer(), null, Status.Invincible, 9999);
+    }
+
+rule: "Invincibility Off"
+    Event.OngoingPlayer
+    if (!ReturnBool("Invincibility", EventPlayer()) || (!HasStatus(EventPlayer(), Status.Invincible) && ReturnBool("Invincibility", EventPlayer())))
+    {
+        Wait(0.1);
+        AbortIfConditionIsFalse();
+        if (!HasStatus(EventPlayer(), Status.Invincible) && ReturnBool("Invincibility", EventPlayer()))
+        {
+            SwitchToggle("Invincibility", EventPlayer(), false, "On");
+        }
+        ClearStatus(EventPlayer(), Status.Invincible);
+    }
+
+rule: "Instant Ult"
+    Event.OngoingPlayer
+    if (ReturnBool("Instant Ultimate", EventPlayer()))
+    if (UltimateChargePercent(EventPlayer()) != 100)
+    if (!menuOpen)
+    {
+        SetUltimateCharge(EventPlayer(), 100);
+    }
+
+rule: "Bunny Jumps"
+    Event.OngoingPlayer
+    if (ReturnBool("Bunny Jumps", EventPlayer()))
+    if (IsOnGround())
+    {
+        ApplyImpulse(EventPlayer(), Up(), RandomInteger(6, 15), Relative.ToWorld, ContraryMotion.Incorporate);
+    }
+
+rule: "Double Jump"
+    Event.OngoingPlayer
+    if (ReturnBool("Double Jump", EventPlayer()))
+    if (IsInAir())
+    if (IsButtonHeld(EventPlayer(), Button.Jump))
+    {
+        ApplyImpulse(EventPlayer(), Up(), 12, Relative.ToWorld, ContraryMotion.Cancel);
+
+    }
+define ReturnBool(define cmd !, define player !): FilteredArray(player.boolArray, ArrayElement()[0] == cmd)[0][1];
+define ReturnToggleString(define cmd !, define player !): FilteredArray(player.boolArray, ArrayElement()[0] == cmd)[0][2];
+void SwitchToggle(define cmd !, define player !, define bool !, define strBool !) playervar  "Switch"
+{
+    for (define i = 0; i < CountOf(boolArray); i++) // OR for (define i = 0; CountOf(AllPlayers()); 1)
+    {
+        if (boolArray[i][0] == cmd)
+        {
+            boolArray[i][1] = bool;
+            boolArray[i][2] = strBool;
+            Abort();
+        }
+    }
+}
+
+rule: "Loop Kill Players"
+    Event.OngoingGlobal
+    if (CountOf(FilteredArray(AllPlayers(), ArrayElement().loopKill)) != 0)
+    {
+        Kill(FilteredArray(AllPlayers(), ArrayElement().loopKill), null);
+        Wait(0.5);
+        LoopIfConditionIsTrue();
+    }

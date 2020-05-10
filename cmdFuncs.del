@@ -1,0 +1,81 @@
+void StatusSet(define args !) "ST" //translates command into a block
+{
+    switch (args[1])
+    {
+        case "Hacked": SetStatus(args[0], EventPlayer(), Status.Hacked, args[2]); break;
+        case "Burning": SetStatus(args[0], EventPlayer(), Status.Burning, args[2]); break;
+        case "Knocked Down": SetStatus(args[0], EventPlayer(), Status.KnockedDown, args[2]); break;
+        case "Asleep": SetStatus(args[0], EventPlayer(), Status.Asleep, args[2]); break;
+        case "Frozen": SetStatus(args[0], EventPlayer(), Status.Frozen, args[2]); break;
+        case "Unkillable": SetStatus(args[0], EventPlayer(), Status.Unkillable, args[2]); break;
+        case "Invincible": SetStatus(args[0], EventPlayer(), Status.Invincible, args[2]); break;
+        case "Phased Out": SetStatus(args[0], EventPlayer(), Status.PhasedOut, args[2]); break;
+        case "Rooted": SetStatus(args[0], EventPlayer(), Status.Rooted, args[2]); break;
+        case "Stunned": SetStatus(args[0], EventPlayer(), Status.Stunned, args[2]); break;
+    }
+}
+
+
+rule: "Jail On Player"
+    Event.OngoingPlayer
+    if (isJailed)
+    {
+        isJailed = true;
+        jailInfo[0] = NearestWalkablePosition(PositionOf(EventPlayer()));
+        SetStatus(EventPlayer(), null, Status.Stunned, 3.5);
+        CreateEffect(AllPlayers(), Effect.LightShaft, Color.Red, jailInfo[0], 4.5, EffectRev.VisibleTo);
+        jailInfo[1] = LastCreatedEntity();
+    }
+
+rule: "Jail Off Player"
+    Event.OngoingPlayer
+    if (!isJailed)
+    {
+        DestroyEffect(jailInfo[1]);
+    }
+
+rule: "Blind On Player"
+    Event.OngoingPlayer
+    if (blindInfo[0])
+    {
+        blindInfo[0] = true;
+        CreateEffect(EventPlayer(), Effect.Sphere, Color.White, EventPlayer(), 20000, EffectRev.None);
+        blindInfo[1] = LastCreatedEntity();
+    }
+
+rule: "Blind Off Player"
+    Event.OngoingPlayer
+    if (!blindInfo[0])
+    {
+        DestroyEffect(blindInfo[1]);
+    }
+
+
+rule: "Player Exited Jail"
+    Event.OngoingPlayer
+    if (isJailed)
+    if (DistanceBetween(jailInfo[0], PositionOf(EventPlayer())) > 4.45)
+    {
+        Teleport(EventPlayer(), jailInfo[0]);
+        SetStatus(EventPlayer(), null, Status.Stunned, 1.5);
+        BigMessage(EventPlayer(), <"DO NOT LEAVE JAIL">);
+        Wait(0.5);
+        LoopIfConditionIsTrue();
+    }
+
+void PlayerStatusClear(define status !, define player !) "PSC" //translates command into a block
+{
+    switch (status)
+    {
+        case "Hacked": ClearStatus(player, Status.Hacked); break;
+        case "Burning": ClearStatus(player, Status.Burning); break;
+        case "Knocked Down": ClearStatus(player, Status.KnockedDown); break;
+        case "Asleep": ClearStatus(player, Status.Asleep); break;
+        case "Frozen": ClearStatus(player, Status.Frozen); break;
+        case "Unkillable": ClearStatus(player, Status.Unkillable); break;
+        case "Invincible": ClearStatus(player, Status.Invincible); break;
+        case "Phased Out": ClearStatus(player, Status.PhasedOut); break;
+        case "Rooted": ClearStatus(player, Status.Rooted); break;
+        case "Stunned": ClearStatus(player, Status.Stunned); break;
+    }
+}

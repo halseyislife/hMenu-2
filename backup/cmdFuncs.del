@@ -1,0 +1,52 @@
+void StatusSet(define args !) "ST" //translates command into a block
+{
+    switch (args[1])
+    {
+        case "Hacked": SetStatus(args[0], EventPlayer(), Status.Hacked, args[2]); break;
+        case "Burning": SetStatus(args[0], EventPlayer(), Status.Burning, args[2]); break;
+        case "Knocked Down": SetStatus(args[0], EventPlayer(), Status.KnockedDown, args[2]); break;
+        case "Asleep": SetStatus(args[0], EventPlayer(), Status.Asleep, args[2]); break;
+        case "Frozen": SetStatus(args[0], EventPlayer(), Status.Frozen, args[2]); break;
+        case "Unkillable": SetStatus(args[0], EventPlayer(), Status.Unkillable, args[2]); break;
+        case "Invincible": SetStatus(args[0], EventPlayer(), Status.Invincible, args[2]); break;
+        case "Phased Out": SetStatus(args[0], EventPlayer(), Status.PhasedOut, args[2]); break;
+        case "Rooted": SetStatus(args[0], EventPlayer(), Status.Rooted, args[2]); break;
+        case "Stunned": SetStatus(args[0], EventPlayer(), Status.Stunned, args[2]); break;
+    }
+}
+
+
+
+void StatusClear(define status !) "SC" //translates command into a block
+{
+    switch (status)
+    {
+        case "Hacked": ClearStatus(EventPlayer(), Status.Hacked); break;
+        case "Burning": ClearStatus(EventPlayer(), Status.Burning); break;
+        case "Knocked Down": ClearStatus(EventPlayer(), Status.KnockedDown); break;
+        case "Asleep": ClearStatus(EventPlayer(), Status.Asleep); break;
+        case "Frozen": ClearStatus(EventPlayer(), Status.Frozen); break;
+        case "Unkillable": ClearStatus(EventPlayer(), Status.Unkillable); break;
+        case "Invincible": ClearStatus(EventPlayer(), Status.Invincible); break;
+        case "Phased Out": ClearStatus(EventPlayer(), Status.PhasedOut); break;
+        case "Rooted": ClearStatus(EventPlayer(), Status.Rooted); break;
+        case "Stunned": ClearStatus(EventPlayer(), Status.Stunned); break;
+    }
+}
+
+void PlayerStatusClear(define status !, define player !) "PSC" //translates command into a block
+{
+    switch (status)
+    {
+        case "Hacked": ClearStatus(player, Status.Hacked); break;
+        case "Burning": ClearStatus(player, Status.Burning); break;
+        case "Knocked Down": ClearStatus(player, Status.KnockedDown); break;
+        case "Asleep": ClearStatus(player, Status.Asleep); break;
+        case "Frozen": ClearStatus(player, Status.Frozen); break;
+        case "Unkillable": ClearStatus(player, Status.Unkillable); break;
+        case "Invincible": ClearStatus(player, Status.Invincible); break;
+        case "Phased Out": ClearStatus(player, Status.PhasedOut); break;
+        case "Rooted": ClearStatus(player, Status.Rooted); break;
+        case "Stunned": ClearStatus(player, Status.Stunned); break;
+    }
+}

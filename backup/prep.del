@@ -1,0 +1,65 @@
+globalvar define paramReturn;
+playervar define tempNum;
+
+rule: "Global Preparation"
+    Event.OngoingGlobal
+    {
+        CreateHudText(FilteredArray(AllPlayers(), ArrayElement().menuOpen), null, null, " -------- \n [Controls: \n Primary Fire - Next Item \n Secondary Fire - Previous Item \n Ability 2 - Back to Main Menu", Location.Left, 3, Color.Blue, Color.Blue, Color.White, HudTextRev.VisibleTo, Spectators.DefaultVisibility);
+        CreateHudText(FilteredArray(AllPlayers(), ArrayElement().menuOpen), null, null, " \n Hold Ability 1 - Enter in selection/Execute CMD \n Press Ultimate - Exit]", Location.Left, 4, Color.Blue, Color.Blue, Color.White, HudTextRev.VisibleTo, Spectators.DefaultVisibility);
+        CreateHudText(AllPlayers(), null, null, <"Server Load: <0> \n Server Load Avg: <1>", ServerLoad(), ServerLoadAverage()>, Location.Right, 0, Color.Blue, Color.Blue, Color.White, HudTextRev.VisibleToAndString, Spectators.DefaultVisibility);
+paramReturn = [["Teleport To", ["Player"]],
+["Kill Self", null],
+["Set Speed", ["Num", [0,2500]]],
+["Select Hero", ["Array", AllHeroes()]],
+["Set Player's Status", ["Player", "Array", statusArray, "Num", [0, 1000]]],
+["Override Menu On", null],
+["Override Menu Off", null],
+["Set Override Target", ["Player"]],
+["Invisible On", null],
+["Invisible Off", null],
+["Add Admin", ["Array", "ReevalArray1"]],
+["Remove Admin", ["Array", "ReevalArray1"]],
+["Respawn", null],
+["Set Projectile Speed", ["Num", [0, 1000]]],
+["Teleport Outside Map", null],
+["Set Gravity", ["Num", [0, 1000]]],
+["Invincibility On", null],
+["Invincibility Off", null],
+["Set Self Status", ["Array", statusArray, "Num", [0,1000]]],
+["Set Projectile Gravity", ["Num", [0, 1000]]],
+["Instant Ultimate On"],
+["Instant Ultimate Off"],
+["Clear Self Status", ["Array", statusArray]],
+["Kill Player", ["Player"]],
+["Bring Player", ["Player"]],
+["Clear Player Status", ["Player", "Array", statusArray]],
+["Toggle Menu Access", ["Player", "Array", [true, false]]],
+["Freecam", null],
+["Bunny Jumps", null]];
+        toggableCommands = ["Invisible", "Invincibility", "Instant Ultimate", "Freecam", "Override Menu", "Bunny Jumps"];
+    }
+
+rule: "Prep Player Menu"
+    Event.OngoingPlayer
+    if (menuEnt == null)
+    if (HasSpawned())
+    {
+        CreateHudText(EventPlayer(),
+        null,
+        <"hMenu 2.0 Pre-release by halseyislifee">,
+        <"current role: <0>", role>,
+        Location.Top,
+        1,
+        Color.White,
+        Color.Blue,
+        Color.White,
+        HudTextRev.String,
+        Spectators.DefaultVisibility);
+        menuEnt = LastTextID();
+        menuAccessible = true;
+        tempNum = 0;
+        for (define i = 0; i < CountOf(toggableCommands); i++) // OR for (define i = 0; CountOf(AllPlayers()); 1)
+            {
+                boolArray[i] = [toggableCommands[i], false, "On"];
+            }
+    }

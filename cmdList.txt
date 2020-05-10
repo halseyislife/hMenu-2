@@ -1,0 +1,42 @@
+Teleport To Player
+Kill Self
+Set Speed
+Invisible Self
+Select Hero
+Respawn
+Set Projectile Speed
+Teleport Out Of Map
+Set Gravity
+God Mode
+Set Self Status
+Set Projectile Gravity
+Instant Ultimate
+Clear Self Status
+
+Kill Player
+Bring Player
+Set Player's Status
+Clear Player Status
+Toggle Player's Menu
+Loop Kill Player
+Explode Player
+Set Player's Damage Power
+Jail Player
+Override Toggle
+Override Target
+Set Player Ability Cooldown
+Blind Player
+Set Player Ultimate Chage
+Set Player Max HP
+Damage Player
+Heal Player
+
+
+Admin Player
+UnAdmin Player
+
+
+user cmds to add
+Thirdperson
+Create Effect //hold off till multi array is supported in hMenu 2
+Cooldowns On/Off

@@ -1,0 +1,58 @@
+playervar define overiddenCMD !;
+playervar define overiddenArgs !;
+
+
+void ExecuteCMD(define cmd !) playervar "Execute CMD"
+{
+    if (ReturnBool("Override Menu", EventPlayer()) && ArrayContains(userCMDS, cmd) && overridePlayers != null)
+    {
+        SmallMessage(EventPlayer(), <"<Overridden CMD> <0> executed!", selectedCMD>);
+        overridePlayers.overiddenArgs = argCollection;
+        overridePlayers.overiddenCMD = cmd;
+        Abort();
+    }
+    SmallMessage(EventPlayer(), <"<0> executed!", selectedCMD>);
+    Wait(0.12);
+    if (ArrayContains(toggableCommands, cmd))
+    {
+        ToggleFunction(cmd, EventPlayer());
+    }
+    else{
+    switch (cmd)
+    {
+        case "Teleport To": Teleport(EventPlayer(), PositionOf(argCollection[0])); break;
+        case "Kill Self": Kill(EventPlayer(), EventPlayer()); break;
+        case "Set Speed": SetMoveSpeed(EventPlayer(), argCollection[0]); break;
+        case "Set Player's Status": StatusSet([argCollection[0], argCollection[1], argCollection[3]]); break;
+        case "Set Override Target": overridePlayers = argCollection[0]; break;
+        case "Select Hero": ForcePlayerHero(EventPlayer(), argCollection[0]); StopForcingHero(EventPlayer()); break;
+        case "Add Admin": SetRole(argCollection[0], "Admin"); break;
+        case "Remove Admin": SetRole(argCollection[0], "User"); break;
+        case "Respawn": Respawn(EventPlayer()); break;
+        case "Set Projectile Speed": SetProjectileSpeed(EventPlayer(), argCollection[0]); break;
+        case "Teleport Outside Map": Teleport(EventPlayer(), PositionOf(EventPlayer()) + Vector(0, 175, 0)); break;
+        case "Set Gravity": SetGravity(EventPlayer(), argCollection[0]); break;
+        case "Set Self Status": StatusSet([EventPlayer(), argCollection[0], argCollection[2]]); break;
+        case "Set Projectile Gravity": SetProjectileGravity(EventPlayer(), argCollection[0]); break;
+        case "Clear Self Status": StatusClear(argCollection[0]); break;
+        case "Kill Player": ClearStatus(argCollection[0], Status.Invincible); SetDamageReceived(argCollection[0], 100); Kill(argCollection[0], EventPlayer()); break;
+        case "Bring Player": Teleport(argCollection[0], PositionOf(EventPlayer())); break;
+        case "Clear Player's Status": PlayerStatusClear(argCollection[1], argCollection[0]); break;
+        case "Toggle Menu Access": CloseMenu(argCollection[0]); argCollection[0].menuAccessible = argCollection[1]; break;
+    }
+    }
+    Wait(0.12);
+    ClearParams(); //resets parameter or even menu depending
+}
+
+
+
+rule: "Override Execution"
+    Event.OngoingPlayer
+    if (overiddenCMD != null)
+    {
+        CloseMenu(EventPlayer());
+        argCollection = overiddenArgs;
+        ExecuteCMD(overiddenCMD);
+        overiddenCMD = false;
+    }

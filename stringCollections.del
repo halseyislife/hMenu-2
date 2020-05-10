@@ -1,0 +1,9 @@
+globalvar define statusArray !;
+globalvar define keyWords !;
+rule: "Setup String Collections"
+    Event.OngoingGlobal
+    {
+        userCMDS = ["Teleport To", "Kill Self", "Set Speed", "Invisible", "Select Hero", "Respawn", "Set Projectile Speed", "Teleport Outside Map", "Set Gravity", "Invincibility", "Set Self Status", "Set Projectile Gravity", "Instant Ultimate", "Clear Self Status"];
+        statusArray = ["Hacked", "Burning", "Knocked Down", "Asleep", "Frozen", "Unkillable", "Invincible", "Phased Out", "Rooted", "Stunned"];
+        keyWords = ["Player", "Array", "Num"];
+    }

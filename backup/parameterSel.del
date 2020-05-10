@@ -1,0 +1,107 @@
+
+void ParameterPrep() playervar "Parameter Prep"
+{
+    paramIndex = 0;
+    currParam = argCollection[paramIndex];
+    SetupParameter(currParam);
+    stringCMD = null;
+}
+
+void SetupParameter(define input !) playervar "Setup Param Selection"
+{
+    switch (input)
+    {
+        case "Player": {
+            selectedIndex = 0;
+            if (ArrayContains(["Set Player's Status", "Kill Player", "Clear Player's Status"], selectedCMD)) arrayCollection = Append(Append(Append(AllPlayers(), "All"), "Others"), "Regulars");
+            else if(ArrayContains(["Set Override Target", "Bring Player", "Toggle Menu Access"], selectedCMD)) arrayCollection = Append(Append(RemoveFromArray(AllPlayers(), EventPlayer()), "Others"), "Regulars");
+            else arrayCollection = AllPlayers();
+            selectionString = <"<0> Selection", input>;
+            break;
+        }
+        case "Num": {
+            selectedIndex = 0;
+            numArg = 1;
+            arrayCollection = null;
+            arrayCollection[0] = " ";
+            selectionString = <"Select a numerical value">;
+            numMin = ReturnGuides()[0];
+            numMax = ReturnGuides()[1];
+            break;
+        }
+        case "Array": {
+            selectedIndex = 0;
+            arrayCollection = ReturnGuides();
+            selectionString = <"Item Selection">;
+            break;
+        }
+    }
+    AbortIf(!((selectedCMD == "Add Admin") || (selectedCMD == "Remove Admin")));
+    switch (selectedCMD)
+    {
+        case "Add Admin": {
+            if (arrayCollection == "ReevalArray1")
+                {
+                    arrayCollection = FilteredArray(AllPlayers(), ArrayElement().role == "User");
+                }
+        }
+        case "Remove Admin": {
+            if (arrayCollection == "ReevalArray1")
+                {
+                    arrayCollection = FilteredArray(AllPlayers(), ArrayElement().role == "Admin");
+                }
+        }
+    }
+}
+
+
+void NextParameter(define input !) "NextParam"
+{
+    if (input == "All" || input == "Others" || input == "Regulars")
+    {
+        argCollection[paramIndex] = ReturnGroup(input);
+    }
+    else argCollection[paramIndex] = input;
+    if (currParam == "Array" || currParam == "Num")
+    {
+        paramIndex += 2;
+    }
+    else paramIndex += 1;
+   currParam = argCollection[paramIndex];
+   SetupParameter(currParam);
+}
+
+
+
+
+define ReturnParameters(define cmd !): FilteredArray(paramReturn, ArrayElement()[0] == cmd)[0][1];
+
+
+define ReturnGroup(define group !) playervar "Return Group"
+{
+    switch (group)
+    {
+        case "Others": return RemoveFromArray(AllPlayers(), EventPlayer());
+        case "All": return AllPlayers();
+        case "Regulars": return FilteredArray(AllPlayers(), ArrayElement().role == "User");
+    }
+    return null;
+}
+
+define ParamComplete(define cmd !, define paramArray !) playervar "ParamComplete"
+{
+    if (CountOf(ReturnParameters(cmd)) == CountOf(paramArray))
+    {
+        if (CountOf(FilteredArray(paramArray, ArrayContains(keyWords, ArrayElement()))) == 0)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+
+define ReturnGuides() playervar "Return Guides"
+{
+    return argCollection[paramIndex + 1];
+}

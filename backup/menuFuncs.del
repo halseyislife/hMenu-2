@@ -1,0 +1,105 @@
+
+
+
+
+define ReplaceInArray(define array, define replacedValue, define newValue): InsertValueInArray(RemoveFromArray(array, replacedValue), IndexOfArrayValue(array,replacedValue), newValue);
+
+
+
+void InputHandler(define input !) playervar "Input Handler"
+{
+    if (selectedCMD == null)
+    {
+        if (ArrayContains(allowedCMDS, input))
+        {
+            selectedCMD = input;
+            if (CountOf(ReturnParameters(selectedCMD)) == 0)
+            {
+                ExecuteCMD(selectedCMD);
+            }
+            else
+            {
+                argCollection = ReturnParameters(selectedCMD);
+                ParameterPrep();
+                stringCMD = selectedCMD;
+            }
+        }
+        else Abort();
+    }
+    else if (selectedCMD != null)
+    {
+        if (!ParamComplete(selectedCMD, argCollection))
+        {
+            if (currParam == "Num")
+            {
+                stringCMD = <"<0> <1>",stringCMD, numArg>;
+                NextParameter(numArg);
+            }
+            else
+            {
+                stringCMD = <"<0> <1>",stringCMD, input>;
+                NextParameter(input);
+            }
+        }
+        else
+        {
+            Wait(0.016);
+            ExecuteCMD(selectedCMD);
+        }
+    }
+}
+
+void ResetMenu(define player !) playervar "ResetMenu" //hard resets menu back to 0 and updates CMDS
+{
+    player.prevCMD = player.selectedCMD;
+    player.selectedIndex = 0;
+    player.selectedCMD = null;
+    player.selectionString = "CMD Selection: ";
+    player.stringCMD = <"No command selected">;
+    player.paramIndex = null;
+    player.numMin = 0;
+    player.numMax = 0;
+    player.numArg = 0;
+    player.currParam = null;
+    player.argCollection = null;
+    UpdateCMDS(player);
+}
+
+
+void ClearParams() playervar "ClearCMD" //Allows player to continue using a command after they have finished executing
+{
+    paramIndex = null;
+    numMin = 0;
+    numMax = 0;
+    numArg = 0;
+    currParam = null;
+    argCollection = null;
+    if (CountOf(ReturnParameters(selectedCMD)) == 0)
+    {
+        selectedCMD = null;
+        stringCMD = <"No command selected">;
+        UpdateCMDS(EventPlayer());
+    }
+    else
+    {
+        argCollection = ReturnParameters(selectedCMD);
+        ParameterPrep();
+        selectedIndex = 0;
+        stringCMD = selectedCMD;
+    }
+}
+
+void UpdateCMDS(define player !) playervar "Update CMDS" //will simply update a players allowed CMDS
+{
+    if (player.argCollection == null)
+    {
+        player.arrayCollection = player.allowedCMDS;
+        if (player.selectedIndex > CountOf(player.arrayCollection) - 1)
+        {
+            player.selectedIndex = 0; //prevents menu from breaking because of an over index leap
+        }
+    }
+}
+
+
+

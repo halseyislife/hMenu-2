@@ -1,0 +1,47 @@
+globalvar define userCMDS;
+void UserSetup(define player !) playervar "[User CMDS]"
+{
+    player.allowedCMDS[0] = "Teleport To";
+    player.allowedCMDS = Append(player.allowedCMDS, "Kill Self");
+    player.allowedCMDS = Append(player.allowedCMDS, "Set Speed");
+    player.allowedCMDS = Append(player.allowedCMDS, "Invisible");
+    player.allowedCMDS = Append(player.allowedCMDS, "Select Hero");
+    player.allowedCMDS = Append(player.allowedCMDS, "Respawn");
+    player.allowedCMDS = Append(player.allowedCMDS, "Set Projectile Speed");
+    player.allowedCMDS = Append(player.allowedCMDS, "Teleport Outside Map");
+    player.allowedCMDS = Append(player.allowedCMDS, "Set Gravity");
+    player.allowedCMDS = Append(player.allowedCMDS, "Invincibility");
+    player.allowedCMDS = Append(player.allowedCMDS, "Set Self Status");
+    player.allowedCMDS = Append(player.allowedCMDS, "Clear Self Status");
+    player.allowedCMDS = Append(player.allowedCMDS, "Set Projectile Gravity");
+    player.allowedCMDS = Append(player.allowedCMDS, "Instant Ultimate");
+    player.allowedCMDS = Append(player.allowedCMDS, "Freecam");
+    player.allowedCMDS = Append(player.allowedCMDS, "Bunny Jumps");
+    player.allowedCMDS = Append(player.allowedCMDS, "Double Jump");
+}
+
+void AdminSetup(define player !) playervar "[Admin CMDS]"
+{
+    player.allowedCMDS = Append(player.allowedCMDS, "Kill Player");
+    player.allowedCMDS = Append(player.allowedCMDS, "Bring Player");
+    player.allowedCMDS = Append(player.allowedCMDS, "Set Player's Status");
+    player.allowedCMDS = Append(player.allowedCMDS, "Clear Player's Status");
+    player.allowedCMDS = Append(player.allowedCMDS, "Toggle Menu Access");
+    player.allowedCMDS = Append(player.allowedCMDS, "Override Menu");
+    player.allowedCMDS = Append(player.allowedCMDS, "Set Override Target");
+    player.allowedCMDS = Append(player.allowedCMDS, "Loop Kill Player");
+    player.allowedCMDS = Append(player.allowedCMDS, "Explode Player");
+    player.allowedCMDS = Append(player.allowedCMDS, "Set Player Damage Power");
+    player.allowedCMDS = Append(player.allowedCMDS, "Jail Player");
+    player.allowedCMDS = Append(player.allowedCMDS, "Blind Player");
+    player.allowedCMDS = Append(player.allowedCMDS, "Set Player Ultimate Charge");
+    player.allowedCMDS = Append(player.allowedCMDS, "Set Player Max HP");
+    player.allowedCMDS = Append(player.allowedCMDS, "Damage Player");
+    player.allowedCMDS = Append(player.allowedCMDS, "Heal Player");
+}
+
+void OwnerSetup(define player !) playervar "[Owner CMDS]"
+{
+    player.allowedCMDS = Append(player.allowedCMDS, "Add Admin");
+    player.allowedCMDS = Append(player.allowedCMDS, "Remove Admin");
+}

@@ -1,0 +1,220 @@
+import "menuFuncs.del";
+import "roleManagement.del";
+import "roleSetup.del";
+import "parameterSel.del";
+import "cmdExec.del";
+import "cmdFuncs.del";
+import "cmdBools.del";
+import "stringCollections.del";
+import "prep.del";
+
+
+playervar define allowedCMDS;
+playervar define menuOpen;
+playervar define role;
+
+
+playervar define baseMenuEnt;
+playervar define menuEnt;
+
+
+playervar define selectionString;
+
+playervar define arrayCollection;
+playervar define numMin;
+playervar define numMax;
+
+playervar define currParam;
+playervar define paramIndex;
+playervar define argCollection;
+playervar define numArg;
+
+playervar define selectedIndex;
+playervar define selectedCMD;
+playervar define stringCMD;
+
+playervar define tempNumSel;
+playervar define prevCMD;
+playervar define tempStrings;
+//[0] - On/Off switch thingy
+
+
+
+
+rule: "Toggle On"
+    Event.OngoingPlayer
+    if (IsButtonHeld(EventPlayer(), Button.Interact) && !IsButtonHeld(EventPlayer(), Button.Ultimate))
+    if (!menuOpen)
+    if (menuAccessible)
+    {
+        OpenMenu();
+        Wait(0.5);
+        menuOpen = true;
+    }
+
+rule: "Toggle Off"
+    Event.OngoingPlayer
+    if (IsButtonHeld(EventPlayer(), Button.Ultimate) && !IsButtonHeld(EventPlayer(), Button.Interact))
+    if (menuOpen)
+    {
+        CloseMenu(EventPlayer());
+        Wait(0.5);
+        menuOpen = false;
+    }
+
+void DisableControls() playervar "Disable Controls"
+{
+    SetPrimaryFireEnabled(EventPlayer(), false);
+    SetSecondaryFireEnabled(EventPlayer(), false);
+    SetAbility1Enabled(EventPlayer(), false);
+    SetAbility2Enabled(EventPlayer(), false);
+    SetUltimateAbilityEnabled(EventPlayer(), false);
+}
+
+void EnableControls(define player) playervar "Enable Controls"
+{
+    if (!ReturnBool("Freecam", player))
+    {
+        SetPrimaryFireEnabled(player, true);
+    }
+    SetSecondaryFireEnabled(player, true);
+    SetAbility1Enabled(player, true);
+    SetAbility2Enabled(player, true);
+    SetUltimateAbilityEnabled(player, true);
+}
+
+void OpenMenu() playervar "Open Menu"
+{
+    arrayCollection = allowedCMDS;
+    if (ArrayContains(allowedCMDS, prevCMD))
+    {
+        selectedIndex = IndexOfArrayValue(allowedCMDS, prevCMD); //loads previous CMD before reset :)
+    }
+    CreateHudText(EventPlayer(),
+        null,
+        selectionString,
+        <"<0> \n -------- \n [<1>] \n -------- \n [Number Selection: <2>]", <"<0> <1>", arrayCollection[selectedIndex], tempStrings[0]>, stringCMD, numArg>,
+        Location.Left,
+        0,
+        Color.White,
+        Color.Blue,
+        Color.White,
+        HudTextRev.String,
+        Spectators.DefaultVisibility);
+    baseMenuEnt[0] = LastTextID();       
+    selectionString = "CMD Selection: ";
+    stringCMD = <"No command selected">;
+    tempStrings[0] = " ";
+    DisableControls();
+}
+
+void CloseMenu(define player !) playervar "Close Menu"
+{
+    ResetMenu(player);
+    player.menuOpen = false;
+    DestroyHudText(player.baseMenuEnt);
+    EnableControls(player);
+}
+
+rule: "Add To Index"
+    Event.OngoingPlayer
+    if (menuOpen)
+    if (IsButtonHeld(EventPlayer(), Button.PrimaryFire))
+    if (currParam != "Num")
+    {
+        if (selectedIndex == CountOf(arrayCollection) - 1)
+        {
+            selectedIndex = 0;
+            Abort();
+        }
+        selectedIndex += 1;
+    }
+
+rule: "Subtract Index"
+    Event.OngoingPlayer
+    if (menuOpen)
+    if (IsButtonHeld(EventPlayer(), Button.SecondaryFire))
+    if (currParam != "Num")
+    {
+        if (selectedIndex == 0) 
+        {
+            selectedIndex = CountOf(arrayCollection) - 1; Abort();
+        }
+        selectedIndex -= 1;
+    }
+
+rule: "Add To Int"
+    Event.OngoingPlayer 
+    if (menuOpen)
+    if (IsButtonHeld(EventPlayer(), Button.PrimaryFire))
+    if (numArg < numMax)
+    if (currParam == "Num")
+    {
+        tempNumSel = 2;
+        ChaseVariableAtRate(numArg, numMax, tempNumSel, RateChaseReevaluation.DestinationAndRate);
+        ChaseVariableOverTime(tempNumSel, 800, 20, TimeChaseReevaluation.DestinationAndDuration);
+    }
+
+rule: "Stop Add To Int"
+    Event.OngoingPlayer
+    if (!IsButtonHeld(EventPlayer(), Button.PrimaryFire) || numArg >= numMax || !menuOpen)
+    {
+        if (numArg > numMax)
+        {
+            numArg = numMax;
+        }
+        StopChasingVariable(numArg);
+        StopChasingVariable(tempNumSel);
+    }
+
+rule: "Sub Int"
+    Event.OngoingPlayer
+    if (menuOpen)
+    if (IsButtonHeld(EventPlayer(), Button.SecondaryFire))
+    if (!numArg <= numMin)
+    if (currParam == "Num")
+    {
+        tempNumSel = 2;
+        ChaseVariableAtRate(numArg, numMin, tempNumSel, RateChaseReevaluation.DestinationAndRate);
+        ChaseVariableOverTime(tempNumSel, 800, 20, TimeChaseReevaluation.DestinationAndDuration);
+    }
+
+rule: "Stop Add To Int"
+    Event.OngoingPlayer
+    if (!IsButtonHeld(EventPlayer(), Button.SecondaryFire) || numArg <= numMin || !menuOpen)
+    {
+        if (numArg < numMin)
+        {
+            numArg = numMin;
+        }
+        StopChasingVariable(numArg);
+        StopChasingVariable(tempNumSel);
+    }
+
+
+
+
+rule: "Select Index"
+    Event.OngoingPlayer
+    if (menuOpen)
+    if (IsButtonHeld(EventPlayer(), Button.Ability1))
+    {
+        Wait(0.4);
+        AbortIfConditionIsFalse();
+        InputHandler(arrayCollection[selectedIndex]);
+    }
+
+rule: "Recurse to Menu"
+    Event.OngoingPlayer
+    if (menuOpen)
+    if (IsButtonHeld(EventPlayer(), Button.Ability2))
+    if (selectedCMD != null)
+    {
+        ResetMenu(EventPlayer());
+        Wait(0.1);
+        if (ArrayContains(allowedCMDS, prevCMD))
+        {
+            selectedIndex = IndexOfArrayValue(allowedCMDS, prevCMD); //loads previous CMD before reset :)
+        }
+    }
+

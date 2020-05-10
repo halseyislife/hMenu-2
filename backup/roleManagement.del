@@ -1,0 +1,34 @@
+void ClearRole(define player !) "Clear Roles"
+{
+    player.menuOpen = false;
+    player.allowedCMDS = null;
+    player.role = "Undefined";
+}
+
+rule: "AssignRole"
+    Event.OnPlayerJoin
+    {
+        if (HostPlayer() == EventPlayer())
+        {
+            SetRole(EventPlayer(), "Owner");
+            Abort();
+        }
+        SetRole(EventPlayer(), "User");
+    }
+
+void SetRole(define player !, define role !) playervar "Set Role"
+{
+    if (player.allowedCMDS != null)
+    {
+        ClearRole(player);
+    }
+    switch (role)
+    {
+        case "User": UserSetup(player); break;
+        case "Admin": UserSetup(player); AdminSetup(player); break;
+        case "Owner": UserSetup(player); AdminSetup(player); OwnerSetup(player); break; 
+    }
+    player.role = role;
+    CloseMenu(player);
+    BigMessage(player, <"You are now an <0>", role>);
+}
