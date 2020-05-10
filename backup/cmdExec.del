@@ -34,18 +34,27 @@ void ExecuteCMD(define cmd !) playervar "Execute CMD"
         case "Set Gravity": SetGravity(EventPlayer(), argCollection[0]); break;
         case "Set Self Status": StatusSet([EventPlayer(), argCollection[0], argCollection[2]]); break;
         case "Set Projectile Gravity": SetProjectileGravity(EventPlayer(), argCollection[0]); break;
-        case "Clear Self Status": StatusClear(argCollection[0]); break;
+        case "Clear Self Status": PlayerStatusClear(argCollection[0], EventPlayer()); break;
         case "Kill Player": ClearStatus(argCollection[0], Status.Invincible); SetDamageReceived(argCollection[0], 100); Kill(argCollection[0], EventPlayer()); break;
         case "Bring Player": Teleport(argCollection[0], PositionOf(EventPlayer())); break;
         case "Clear Player's Status": PlayerStatusClear(argCollection[1], argCollection[0]); break;
-        case "Toggle Menu Access": CloseMenu(argCollection[0]); argCollection[0].menuAccessible = argCollection[1]; break;
+        case "Toggle Menu Access": argCollection[0].menuAccessible = StringToBool(argCollection[1]); break;
+        case "Loop Kill Player": argCollection[0].loopKill = StringToBool(argCollection[1]); break;
+        case "Explode Player": ClearStatus(argCollection[0], Status.Invincible); SetDamageReceived(argCollection[0], 100); Kill(argCollection[0], EventPlayer()); PlayEffect(AllPlayers(), PlayEffect.BadExplosion, Color.Red, PositionOf(argCollection[0]), 3.5); break;
+        case "Set Player Damage Power": SetDamageDealt(argCollection[0], argCollection[1]); break;
+        case "Jail Player": argCollection[0].isJailed = StringToBool(argCollection[1]); break;
+        case "Blind Player": argCollection[0].blindInfo[0] = StringToBool(argCollection[1]); break;
+        case "Set Player Ultimate Charge": SetUltimateCharge(argCollection[0], argCollection[1]); break;
+        case "Set Player Max HP": SetMaxHealth(argCollection[0], argCollection[1]); break;
+        case "Damage Player": Damage(argCollection[0], EventPlayer(), argCollection[1]); break;
+        case "Heal Player": Heal(argCollection[0], EventPlayer(), argCollection[1]); break;
     }
     }
     Wait(0.12);
     ClearParams(); //resets parameter or even menu depending
 }
 
-
+define StringToBool(define string !): ["On", 1, "Off", 0][IndexOfArrayValue(["On", 1, "Off", 0], string) + 1];
 
 rule: "Override Execution"
     Event.OngoingPlayer

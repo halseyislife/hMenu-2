@@ -120,9 +120,13 @@ rule: "Add To Index"
     Event.OngoingPlayer
     if (menuOpen)
     if (IsButtonHeld(EventPlayer(), Button.PrimaryFire))
-    if (selectedIndex != CountOf(arrayCollection) - 1)
     if (currParam != "Num")
     {
+        if (selectedIndex == CountOf(arrayCollection) - 1)
+        {
+            selectedIndex = 0;
+            Abort();
+        }
         selectedIndex += 1;
     }
 
@@ -130,9 +134,12 @@ rule: "Subtract Index"
     Event.OngoingPlayer
     if (menuOpen)
     if (IsButtonHeld(EventPlayer(), Button.SecondaryFire))
-    if (selectedIndex != 0)
     if (currParam != "Num")
     {
+        if (selectedIndex == 0) 
+        {
+            selectedIndex = CountOf(arrayCollection) - 1; Abort();
+        }
         selectedIndex -= 1;
     }
 
@@ -204,5 +211,10 @@ rule: "Recurse to Menu"
     if (selectedCMD != null)
     {
         ResetMenu(EventPlayer());
+        Wait(0.1);
+        if (ArrayContains(allowedCMDS, prevCMD))
+        {
+            selectedIndex = IndexOfArrayValue(allowedCMDS, prevCMD); //loads previous CMD before reset :)
+        }
     }
 

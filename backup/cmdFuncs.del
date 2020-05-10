@@ -16,23 +16,52 @@ void StatusSet(define args !) "ST" //translates command into a block
 }
 
 
-
-void StatusClear(define status !) "SC" //translates command into a block
-{
-    switch (status)
+rule: "Jail On Player"
+    Event.OngoingPlayer
+    if (isJailed)
     {
-        case "Hacked": ClearStatus(EventPlayer(), Status.Hacked); break;
-        case "Burning": ClearStatus(EventPlayer(), Status.Burning); break;
-        case "Knocked Down": ClearStatus(EventPlayer(), Status.KnockedDown); break;
-        case "Asleep": ClearStatus(EventPlayer(), Status.Asleep); break;
-        case "Frozen": ClearStatus(EventPlayer(), Status.Frozen); break;
-        case "Unkillable": ClearStatus(EventPlayer(), Status.Unkillable); break;
-        case "Invincible": ClearStatus(EventPlayer(), Status.Invincible); break;
-        case "Phased Out": ClearStatus(EventPlayer(), Status.PhasedOut); break;
-        case "Rooted": ClearStatus(EventPlayer(), Status.Rooted); break;
-        case "Stunned": ClearStatus(EventPlayer(), Status.Stunned); break;
+        isJailed = true;
+        jailInfo[0] = NearestWalkablePosition(PositionOf(EventPlayer()));
+        SetStatus(EventPlayer(), null, Status.Stunned, 3.5);
+        CreateEffect(AllPlayers(), Effect.LightShaft, Color.Red, jailInfo[0], 4.5, EffectRev.VisibleTo);
+        jailInfo[1] = LastCreatedEntity();
     }
-}
+
+rule: "Jail Off Player"
+    Event.OngoingPlayer
+    if (!isJailed)
+    {
+        DestroyEffect(jailInfo[1]);
+    }
+
+rule: "Blind On Player"
+    Event.OngoingPlayer
+    if (blindInfo[0])
+    {
+        blindInfo[0] = true;
+        CreateEffect(EventPlayer(), Effect.Sphere, Color.White, EventPlayer(), 20000, EffectRev.None);
+        blindInfo[1] = LastCreatedEntity();
+    }
+
+rule: "Blind Off Player"
+    Event.OngoingPlayer
+    if (!blindInfo[0])
+    {
+        DestroyEffect(blindInfo[1]);
+    }
+
+
+rule: "Player Exited Jail"
+    Event.OngoingPlayer
+    if (isJailed)
+    if (DistanceBetween(jailInfo[0], PositionOf(EventPlayer())) > 4.45)
+    {
+        Teleport(EventPlayer(), jailInfo[0]);
+        SetStatus(EventPlayer(), null, Status.Stunned, 1.5);
+        BigMessage(EventPlayer(), <"DO NOT LEAVE JAIL">);
+        Wait(0.5);
+        LoopIfConditionIsTrue();
+    }
 
 void PlayerStatusClear(define status !, define player !) "PSC" //translates command into a block
 {

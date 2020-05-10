@@ -33,10 +33,20 @@ paramReturn = [["Teleport To", ["Player"]],
 ["Kill Player", ["Player"]],
 ["Bring Player", ["Player"]],
 ["Clear Player Status", ["Player", "Array", statusArray]],
-["Toggle Menu Access", ["Player", "Array", [true, false]]],
+["Toggle Menu Access", ["Player", "Array", ["On", "Off"]]],
 ["Freecam", null],
-["Bunny Jumps", null]];
-        toggableCommands = ["Invisible", "Invincibility", "Instant Ultimate", "Freecam", "Override Menu", "Bunny Jumps"];
+["Bunny Jumps", null],
+["Loop Kill Player", ["Player", "Array", ["On", "Off"]]],
+["Explode Player", ["Player"]],
+["Set Player Damage Power", ["Player", "Num", [0, 1000]]],
+["Jail Player", ["Player", "Array", ["On", "Off"]]],
+["Blind Player", ["Player", "Array", ["On", "Off"]]],
+["Set Player Ultimate Charge", ["Player", "Num", [0,100]]],
+["Set Player Max HP", ["Player", "Num", [1, 1000]]],
+["Damage Player", ["Player", "Num", [1, 2000]]],
+["Heal Player", ["Player", "Num", [1, 2000]]],
+["Double Jump", null]];
+        toggableCommands = ["Invisible", "Invincibility", "Instant Ultimate", "Freecam", "Override Menu", "Bunny Jumps", "Double Jump"];
     }
 
 rule: "Prep Player Menu"

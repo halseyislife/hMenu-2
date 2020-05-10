@@ -13,7 +13,7 @@ void SetupParameter(define input !) playervar "Setup Param Selection"
     {
         case "Player": {
             selectedIndex = 0;
-            if (ArrayContains(["Set Player's Status", "Kill Player", "Clear Player's Status"], selectedCMD)) arrayCollection = Append(Append(Append(AllPlayers(), "All"), "Others"), "Regulars");
+            if (ArrayContains(["Set Player's Status", "Kill Player", "Clear Player's Status", "Heal Player", "Damage Player"], selectedCMD)) arrayCollection = Append(Append(Append(AllPlayers(), "All"), "Others"), "Regulars");
             else if(ArrayContains(["Set Override Target", "Bring Player", "Toggle Menu Access"], selectedCMD)) arrayCollection = Append(Append(RemoveFromArray(AllPlayers(), EventPlayer()), "Others"), "Regulars");
             else arrayCollection = AllPlayers();
             selectionString = <"<0> Selection", input>;

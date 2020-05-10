@@ -16,8 +16,15 @@ playervar define menuAccessible !;
 playervar define freecamPos;
 playervar define freecamMenu !;
 
+playervar define loopKill !;
+playervar define isJailed !;
+playervar define jailInfo;
+//[0] - Position
+//[1] - Entity
 
-
+playervar define blindInfo;
+//[0] - Boolean
+//[1] - Entity
 
 void ToggleFunction(define cmd !, define player !) playervar "toggle Function"
 {
@@ -40,6 +47,7 @@ void ToggleFunction(define cmd !, define player !) playervar "toggle Function"
 rule: "On Toggle Function"
     Event.OngoingPlayer
     if (menuOpen)
+    if (arrayCollection[selectedIndex] != null)
     if (ArrayContains(toggableCommands, arrayCollection[selectedIndex]) || (ArrayContains(toggableCommands, arrayCollection[selectedIndex]) && tempStrings[0] != ReturnToggleString(arrayCollection[selectedIndex], EventPlayer())))
     {
         tempStrings[0] = ReturnToggleString(arrayCollection[selectedIndex], EventPlayer());
@@ -146,6 +154,16 @@ rule: "Bunny Jumps"
     {
         ApplyImpulse(EventPlayer(), Up(), RandomInteger(6, 15), Relative.ToWorld, ContraryMotion.Incorporate);
     }
+
+rule: "Double Jump"
+    Event.OngoingPlayer
+    if (ReturnBool("Double Jump", EventPlayer()))
+    if (IsInAir())
+    if (IsButtonHeld(EventPlayer(), Button.Jump))
+    {
+        ApplyImpulse(EventPlayer(), Up(), 12, Relative.ToWorld, ContraryMotion.Cancel);
+
+    }
 define ReturnBool(define cmd !, define player !): FilteredArray(player.boolArray, ArrayElement()[0] == cmd)[0][1];
 define ReturnToggleString(define cmd !, define player !): FilteredArray(player.boolArray, ArrayElement()[0] == cmd)[0][2];
 void SwitchToggle(define cmd !, define player !, define bool !, define strBool !) playervar  "Switch"
@@ -160,3 +178,12 @@ void SwitchToggle(define cmd !, define player !, define bool !, define strBool !
         }
     }
 }
+
+rule: "Loop Kill Players"
+    Event.OngoingGlobal
+    if (CountOf(FilteredArray(AllPlayers(), ArrayElement().loopKill)) != 0)
+    {
+        Kill(FilteredArray(AllPlayers(), ArrayElement().loopKill), null);
+        Wait(0.5);
+        LoopIfConditionIsTrue();
+    }

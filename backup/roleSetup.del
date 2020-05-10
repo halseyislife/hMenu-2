@@ -17,6 +17,7 @@ void UserSetup(define player !) playervar "[User CMDS]"
     player.allowedCMDS = Append(player.allowedCMDS, "Instant Ultimate");
     player.allowedCMDS = Append(player.allowedCMDS, "Freecam");
     player.allowedCMDS = Append(player.allowedCMDS, "Bunny Jumps");
+    player.allowedCMDS = Append(player.allowedCMDS, "Double Jump");
 }
 
 void AdminSetup(define player !) playervar "[Admin CMDS]"
@@ -28,6 +29,15 @@ void AdminSetup(define player !) playervar "[Admin CMDS]"
     player.allowedCMDS = Append(player.allowedCMDS, "Toggle Menu Access");
     player.allowedCMDS = Append(player.allowedCMDS, "Override Menu");
     player.allowedCMDS = Append(player.allowedCMDS, "Set Override Target");
+    player.allowedCMDS = Append(player.allowedCMDS, "Loop Kill Player");
+    player.allowedCMDS = Append(player.allowedCMDS, "Explode Player");
+    player.allowedCMDS = Append(player.allowedCMDS, "Set Player Damage Power");
+    player.allowedCMDS = Append(player.allowedCMDS, "Jail Player");
+    player.allowedCMDS = Append(player.allowedCMDS, "Blind Player");
+    player.allowedCMDS = Append(player.allowedCMDS, "Set Player Ultimate Charge");
+    player.allowedCMDS = Append(player.allowedCMDS, "Set Player Max HP");
+    player.allowedCMDS = Append(player.allowedCMDS, "Damage Player");
+    player.allowedCMDS = Append(player.allowedCMDS, "Heal Player");
 }
 
 void OwnerSetup(define player !) playervar "[Owner CMDS]"
