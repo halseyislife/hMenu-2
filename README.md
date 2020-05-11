@@ -1,2 +1,2 @@
 # hMenu-2
- A skrimish menu made in OSTW.
+ A skirmish menu made in OSTW.
