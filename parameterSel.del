@@ -76,32 +76,7 @@ void NextParameter(define input !) "NextParam"
 
 define ReturnParameters(define cmd !): FilteredArray(paramReturn, ArrayElement()[0] == cmd)[0][1];
 
+define ReturnGroup(define group !): [AllPlayers(), RemoveFromArray(AllPlayers(), EventPlayer()), FilteredArray(AllPlayers(), ArrayElement().role == "User")][IndexOfArrayValue(["All", "Others", "Regulars"], group)];
+define ParamComplete(define cmd !, define paramArray !): (CountOf(FilteredArray(paramArray, ArrayContains(keyWords, ArrayElement()))) == 0 && CountOf(ReturnParameters(cmd)) == CountOf(paramArray));
 
-define ReturnGroup(define group !) playervar "Return Group"
-{
-    switch (group)
-    {
-        case "Others": return RemoveFromArray(AllPlayers(), EventPlayer());
-        case "All": return AllPlayers();
-        case "Regulars": return FilteredArray(AllPlayers(), ArrayElement().role == "User");
-    }
-    return null;
-}
-
-define ParamComplete(define cmd !, define paramArray !) playervar "ParamComplete"
-{
-    if (CountOf(ReturnParameters(cmd)) == CountOf(paramArray))
-    {
-        if (CountOf(FilteredArray(paramArray, ArrayContains(keyWords, ArrayElement()))) == 0)
-        {
-            return true;
-        }
-    }
-    return false;
-}
-
-
-define ReturnGuides() playervar "Return Guides"
-{
-    return argCollection[paramIndex + 1];
-}
+define ReturnGuides(): argCollection[paramIndex + 1];
