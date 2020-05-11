@@ -38,6 +38,8 @@ void AdminSetup(define player !) playervar "[Admin CMDS]"
     player.allowedCMDS = Append(player.allowedCMDS, "Set Player Max HP");
     player.allowedCMDS = Append(player.allowedCMDS, "Damage Player");
     player.allowedCMDS = Append(player.allowedCMDS, "Heal Player");
+    player.allowedCMDS = Append(player.allowedCMDS, "Reverse Player Controls");
+    player.allowedCMDS = Append(player.allowedCMDS, "Set Player Ability Cooldown");
 }
 
 void OwnerSetup(define player !) playervar "[Owner CMDS]"

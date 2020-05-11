@@ -39,7 +39,7 @@ rule: "Blind On Player"
     if (blindInfo[0])
     {
         blindInfo[0] = true;
-        CreateEffect(EventPlayer(), Effect.Sphere, Color.White, EventPlayer(), 20000, EffectRev.None);
+        CreateEffect(EventPlayer(), Effect.Sphere, Color.White, EventPlayer(), 25, EffectRev.None);
         blindInfo[1] = LastCreatedEntity();
     }
 
@@ -50,7 +50,20 @@ rule: "Blind Off Player"
         DestroyEffect(blindInfo[1]);
     }
 
+rule: "Reverse Controls On"
+    Event.OngoingPlayer
+    if (reverseControls)
+    {
+        StartTransformingThrottle(EventPlayer(), -1, -1, FacingDirectionOf(EventPlayer()));
+    }
 
+rule: "Reverse Controls Off"
+    Event.OngoingPlayer
+    if (!reverseControls)
+    {
+        StopTransformingThrottle(EventPlayer());
+        StartTransformingThrottle(EventPlayer(), 1, 1, FacingDirectionOf(EventPlayer()));
+    }
 rule: "Player Exited Jail"
     Event.OngoingPlayer
     if (isJailed)
@@ -79,3 +92,4 @@ void PlayerStatusClear(define status !, define player !) "PSC" //translates comm
         case "Stunned": ClearStatus(player, Status.Stunned); break;
     }
 }
+define ReturnButton(define button !): [ButtonValue(Button.Ability1), ButtonValue(Button.Ability2), ButtonValue(Button.SecondaryFire)][IndexOfArrayValue(["Ability 1", "Ability 2", "Secondary Fire"], button)];

@@ -25,6 +25,7 @@ playervar define jailInfo;
 playervar define blindInfo;
 //[0] - Boolean
 //[1] - Entity
+playervar define reverseControls !;
 
 void ToggleFunction(define cmd !, define player !) playervar "toggle Function"
 {
@@ -83,6 +84,7 @@ rule: "Freecam Forward"
     Event.OngoingPlayer
     if (ReturnBool("Freecam", EventPlayer()))
     if (IsButtonHeld(EventPlayer(), Button.PrimaryFire))
+    if (!menuOpen)
     {
         ChaseVariableAtRate(freecamPos, (freecamPos) + (FacingDirectionOf(EventPlayer()) * 2), 20, RateChaseReevaluation.DestinationAndRate);
         while(ReturnBool("Freecam", EventPlayer()) && IsButtonHeld(EventPlayer(), Button.PrimaryFire))

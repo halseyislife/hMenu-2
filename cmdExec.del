@@ -48,6 +48,8 @@ void ExecuteCMD(define cmd !) playervar "Execute CMD"
         case "Set Player Max HP": SetMaxHealth(argCollection[0], argCollection[1]); break;
         case "Damage Player": Damage(argCollection[0], EventPlayer(), argCollection[1]); break;
         case "Heal Player": Heal(argCollection[0], EventPlayer(), argCollection[1]); break;
+        case "Reverse Player Controls": argCollection[0].reverseControls = StringToBool(argCollection[1]); break;
+        case "Set Player Ability Cooldown": SetAbilityCooldown(argCollection[0], ReturnButton(argCollection[1]), argCollection[3]); break;
     }
     }
     Wait(0.12);
